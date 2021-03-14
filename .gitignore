@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/ELKApiSolution/.vs/ELKApiSolution/v16
+/ELKApiSolution/ELKApi/obj
+/ELKApiSolution/ELKApi/bin/Debug/net5.0
