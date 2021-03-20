@@ -1,0 +1,53 @@
+name: ELKApi
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  Continuous-integration:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+      
+    - name: Install SDK 5.0
+      run: sudo apt-get install dotnet-sdk-5.0
+        
+    - name: Install dependencies
+      working-directory: /home/runner/work/ELKApi/ELKApi/ELKApiSolution
+      run: dotnet restore
+    
+    - name: Build
+      working-directory: /home/runner/work/ELKApi/ELKApi/ELKApiSolution
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Test
+      working-directory: /home/runner/work/ELKApi/ELKApi/ELKApiSolution
+      run: dotnet test --no-restore --verbosity normal
+
+  Continuous_delivery:
+    needs: [Continuous-integration]
+    runs-on: ubuntu-latest
+    env:
+      Repo: /home/runner/work/ELKApi/ELKApi/ELKApiSolution/ELKApi/
+      DockerImageName: bakayarusama/elk_api:latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v1
+
+    - name: Login to Docker Hub
+      run: docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} 
+             -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Build Docker image
+      working-directory: /home/runner/work/ELKApi/ELKApi/ELKApiSolution/ELKApi/
+      run: docker build -t $DockerImageName $Repo
+
+    - name: Publish Docker image
+      run: docker push $DockerImageName
