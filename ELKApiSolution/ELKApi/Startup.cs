@@ -1,16 +1,11 @@
+using ELKApi.Config;
+using ELKApi.Services.LoggingService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ELKApi
 {
@@ -32,6 +27,16 @@ namespace ELKApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ELKApi", Version = "v1" });
             });
+
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddJsonFile("appsettings.json");
+            var config = configBuilder.Build();
+
+            // Config
+            services.Configure<ElasticConfiguration>(options => config.GetSection("ElasticConfiguration").Bind(options));
+
+            // Services
+            services.AddTransient<ILoggingService, LoggingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
