@@ -6,3 +6,6 @@
 /ELKApiSolution/.vs/ELKApiSolution/v16
 /ELKApiSolution/ELKApi/obj
 /ELKApiSolution/ELKApi/bin/Debug/net5.0
+/ELKApiSolution/.vs/ELKApiSolution
+/ELKApiSolution/ELKApi.Tests/bin/Debug/net5.0
+/ELKApiSolution/ELKApi.Tests/obj
