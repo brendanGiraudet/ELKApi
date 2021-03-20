@@ -10,6 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["./ELKApiSolution/ELKApi/ELKApi.csproj", "ELKApi/"]
 WORKDIR "/src/ELKApi"
+RUN ls
 RUN dotnet restore "./ELKApiSolution/ELKApi/ELKApi.csproj"
 COPY . .
 RUN dotnet build "ELKApi.csproj" -c Release -o /app/build
