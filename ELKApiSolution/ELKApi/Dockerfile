@@ -9,7 +9,7 @@ EXPOSE 2525
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 CMD ls -la
-COPY ["./ELKApiSolution/ELKApi/ELKApi.csproj", "ELKApi/"]
+COPY ["./ELKApi.csproj", "ELKApi/"]
 WORKDIR "/src/ELKApi"
 RUN dotnet restore "./ELKApi.csproj"
 COPY . .
