@@ -8,10 +8,10 @@ EXPOSE 2525
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["ELKApi/ELKApi.csproj", "ELKApi/"]
-RUN dotnet restore "ELKApi/ELKApi.csproj"
-COPY . .
+COPY ["./ELKApi/ELKApi.csproj", "ELKApi/"]
 WORKDIR "/src/ELKApi"
+RUN dotnet restore "./ELKApi/ELKApi.csproj"
+COPY . .
 RUN dotnet build "ELKApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
