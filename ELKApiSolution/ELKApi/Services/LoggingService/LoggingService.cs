@@ -43,10 +43,10 @@ namespace ELKApi.Services.LoggingService
             {
                 switch (type)
                 {
-                    case LogType.Error:
+                    case LogType.Errors:
                         _logger.Error(logContent);
                         break;
-                    case LogType.Information:
+                    case LogType.Informations:
                         _logger.Information(logContent);
                         break;
                     default:

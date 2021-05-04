@@ -3,7 +3,7 @@
     public enum LogType
     {
         NA,
-        Information,
-        Error
+        Informations,
+        Errors
     }
 }

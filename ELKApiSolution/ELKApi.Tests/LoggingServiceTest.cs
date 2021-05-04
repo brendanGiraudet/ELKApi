@@ -15,8 +15,8 @@ namespace ELKApi.Tests
 
         #region Log
         [Theory]
-        [InlineData(LogType.Information)]
-        [InlineData(LogType.Error)]
+        [InlineData(LogType.Informations)]
+        [InlineData(LogType.Errors)]
         public async Task ShouldHaveTrueWhenLogInformationMethodIsCall(LogType logType)
         {
             // Arrange
@@ -30,8 +30,8 @@ namespace ELKApi.Tests
         }
 
         [Theory]
-        [InlineData(LogType.Information)]
-        [InlineData(LogType.Error)]
+        [InlineData(LogType.Informations)]
+        [InlineData(LogType.Errors)]
         public async Task ShouldHaveFalseWhenLogWithEmptyLogContent(LogType logType)
         {
             // Arrange
