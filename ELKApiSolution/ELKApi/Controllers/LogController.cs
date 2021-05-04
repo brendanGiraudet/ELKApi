@@ -1,6 +1,8 @@
-﻿using ELKApi.Services.LoggingService;
+﻿using ELKApi.Enumerations;
+using ELKApi.Services.LoggingService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace ELKApi.Controllers
@@ -16,12 +18,15 @@ namespace ELKApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/information")]
+        [Route("~/{logType}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> LogInformation(string logContent)
+        public async Task<IActionResult> Log(string logContent, string logType)
         {
-            var isLogged = await _loggingService.LogInformation(logContent);
+            if (!Enum.TryParse(logType, out LogType type) || !Enum.IsDefined(typeof(LogType), type)) return StatusCode(StatusCodes.Status400BadRequest);
+
+            var isLogged = await _loggingService.Log(logContent, type);
 
             if (!isLogged) return StatusCode(StatusCodes.Status500InternalServerError);
 

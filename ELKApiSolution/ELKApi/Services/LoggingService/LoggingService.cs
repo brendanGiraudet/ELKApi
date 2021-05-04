@@ -5,6 +5,7 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using ELKApi.Enumerations;
 
 namespace ELKApi.Services.LoggingService
 {
@@ -17,12 +18,12 @@ namespace ELKApi.Services.LoggingService
             _elasticConfiguration = elasticConfiguration.Value;
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            Log.Logger = new LoggerConfiguration()
+            Serilog.Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .WriteTo.Elasticsearch(ConfigureElasticSink(_elasticConfiguration.Uri, environment))
                 .Enrich.WithProperty("Environment", environment)
                 .CreateLogger();
-            _logger = Log.Logger;
+            _logger = Serilog.Log.Logger;
         }
 
         private static ElasticsearchSinkOptions ConfigureElasticSink(string elasticUri, string environment)
@@ -34,12 +35,23 @@ namespace ELKApi.Services.LoggingService
             };
         }
 
-        public Task<bool> LogInformation(string logContent)
+        public Task<bool> Log(string logContent, LogType type)
         {
             if (string.IsNullOrWhiteSpace(logContent)) return Task.FromResult(false);
+
             try
             {
-                _logger.Information(logContent);
+                switch (type)
+                {
+                    case LogType.Error:
+                        _logger.Error(logContent);
+                        break;
+                    case LogType.Information:
+                        _logger.Information(logContent);
+                        break;
+                    default:
+                        return Task.FromResult(false);
+                }
                 return Task.FromResult(true);
             }
             catch (Exception)
