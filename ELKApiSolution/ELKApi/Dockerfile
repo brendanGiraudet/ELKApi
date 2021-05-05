@@ -20,6 +20,7 @@ RUN dotnet publish "ELKApi.csproj" -c Release -o /app/publish
 FROM base AS final
 ENV ASPNETCORE_URLS=https://+:2525
 ENV ASPNETCORE_HTTPS_PORT=2525
+ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="elk_api"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/elk_api.pfx
 WORKDIR /app
