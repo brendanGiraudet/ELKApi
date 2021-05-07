@@ -18,15 +18,15 @@ namespace ELKApi.Controllers
         }
 
         [HttpPost]
-        [Route("{logType}")]
+        [Route("{type}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Log(string logContent, string logType)
+        public async Task<IActionResult> Log([FromBody]string content, string type)
         {
-            if (!Enum.TryParse(logType, out LogType type) || !Enum.IsDefined(typeof(LogType), type)) return StatusCode(StatusCodes.Status400BadRequest);
+            if (!Enum.TryParse(type, out LogType logtype) || !Enum.IsDefined(typeof(LogType), logtype)) return StatusCode(StatusCodes.Status400BadRequest);
 
-            var isLogged = await _loggingService.Log(logContent, type);
+            var isLogged = await _loggingService.Log(content, logtype);
 
             if (!isLogged) return StatusCode(StatusCodes.Status500InternalServerError);
 
