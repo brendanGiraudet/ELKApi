@@ -1,10 +1,11 @@
-﻿using ELKApi.Enumerations;
+﻿using ELKApi.Dtos;
 using System.Threading.Tasks;
 
 namespace ELKApi.Services.LoggingService
 {
     public interface ILoggingService
     {
-        Task<bool> Log(string logContent, LogType type);
+        bool IsValidLogDto(LogDto logDto);
+        Task<bool> Log(LogDto logDto);
     }
 }

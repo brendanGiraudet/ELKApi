@@ -1,8 +1,7 @@
-﻿using ELKApi.Enumerations;
+﻿using ELKApi.Dtos;
 using ELKApi.Services.LoggingService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace ELKApi.Controllers
@@ -18,15 +17,14 @@ namespace ELKApi.Controllers
         }
 
         [HttpPost]
-        [Route("{type}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Log([FromBody]string content, string type)
+        public async Task<IActionResult> Log(LogDto logDto)
         {
-            if (!Enum.TryParse(type, out LogType logtype) || !Enum.IsDefined(typeof(LogType), logtype)) return StatusCode(StatusCodes.Status400BadRequest);
+            if (!_loggingService.IsValidLogDto(logDto)) return StatusCode(StatusCodes.Status400BadRequest);
 
-            var isLogged = await _loggingService.Log(content, logtype);
+            var isLogged = await _loggingService.Log(logDto);
 
             if (!isLogged) return StatusCode(StatusCodes.Status500InternalServerError);
 

@@ -1,6 +1,6 @@
 ﻿namespace ELKApi.Enumerations
 {
-    public enum LogType
+    public enum LogLevel
     {
         NA,
         Informations,

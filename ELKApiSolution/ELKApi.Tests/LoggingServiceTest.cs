@@ -1,3 +1,4 @@
+using ELKApi.Dtos;
 using ELKApi.Enumerations;
 using ELKApi.Services.LoggingService;
 using System.Threading.Tasks;
@@ -15,44 +16,55 @@ namespace ELKApi.Tests
 
         #region Log
         [Theory]
-        [InlineData(LogType.Informations)]
-        [InlineData(LogType.Errors)]
-        public async Task ShouldHaveTrueWhenLogInformationMethodIsCall(LogType logType)
+        [InlineData(LogLevel.Informations)]
+        [InlineData(LogLevel.Errors)]
+        public async Task ShouldHaveTrueWhenLogWithRightParameters(LogLevel logLevel)
         {
             // Arrange
-            var logContent = "elk-api-test Content";
+            LogDto logDto = new()
+            {
+                Level = logLevel,
+                Message = "Unit test"
+            };
 
             // Act
-            var isLogged = await _loggingService.Log(logContent, logType);
+            var isLogged = await _loggingService.Log(logDto);
 
             // Assert
             Assert.True(isLogged);
         }
 
         [Theory]
-        [InlineData(LogType.Informations)]
-        [InlineData(LogType.Errors)]
-        public async Task ShouldHaveFalseWhenLogWithEmptyLogContent(LogType logType)
+        [InlineData(LogLevel.Informations)]
+        [InlineData(LogLevel.Errors)]
+        public async Task ShouldHaveFalseWhenLogWithEmptyMessage(LogLevel logLevel)
         {
             // Arrange
-            var logContent = string.Empty;
+            LogDto logDto = new()
+            {
+                Level = logLevel,
+                Message = string.Empty
+            };
 
             // Act
-            var isLogged = await _loggingService.Log(logContent, logType);
+            var isLogged = await _loggingService.Log(logDto);
 
             // Assert
             Assert.False(isLogged);
         }
         
         [Fact]
-        public async Task ShouldHaveFalseWhenLogWithWrongType()
+        public async Task ShouldHaveFalseWhenLogWithWrongLevel()
         {
             // Arrange
-            var logContent = "elk-api-test Content";
-            var logType = -1;
+            LogDto logDto = new()
+            {
+                Level = LogLevel.NA,
+                Message = "Unit test"
+            };
 
             // Act
-            var isLogged = await _loggingService.Log(logContent, (LogType)logType);
+            var isLogged = await _loggingService.Log(logDto);
 
             // Assert
             Assert.False(isLogged);

@@ -1,53 +1,53 @@
 ﻿using ELKApi.Config;
+using ELKApi.Dtos;
+using ELKApi.Enumerations;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using ELKApi.Enumerations;
 
 namespace ELKApi.Services.LoggingService
 {
     public class LoggingService : ILoggingService
     {
-        private ILogger _logger;
         private ElasticConfiguration _elasticConfiguration;
         public LoggingService(IOptions<ElasticConfiguration> elasticConfiguration)
         {
             _elasticConfiguration = elasticConfiguration.Value;
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            Serilog.Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(_elasticConfiguration.Uri, environment))
-                .Enrich.WithProperty("Environment", environment)
-                .CreateLogger();
-            _logger = Serilog.Log.Logger;
         }
 
-        private static ElasticsearchSinkOptions ConfigureElasticSink(string elasticUri, string environment)
+        private ILogger CreateLogger(string applicationName, string environment)
         {
-            return new ElasticsearchSinkOptions(new Uri(elasticUri))
+            return new LoggerConfiguration()
+            .Enrich.WithProperty("Application", applicationName)
+            .Enrich.WithProperty("Environment", environment)
+            .MinimumLevel.Debug()
+            .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(_elasticConfiguration.Uri))
             {
                 AutoRegisterTemplate = true,
-                IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
-            };
+                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                EmitEventFailure = EmitEventFailureHandling.ThrowException | EmitEventFailureHandling.WriteToSelfLog,
+                FailureCallback = e => Console.WriteLine("Unable to submit event " + e.MessageTemplate),
+            })
+            .CreateLogger();
         }
 
-        public Task<bool> Log(string logContent, LogType type)
+        public Task<bool> Log(LogDto logDto)
         {
-            if (string.IsNullOrWhiteSpace(logContent)) return Task.FromResult(false);
+            if (!IsValidLogDto(logDto)) return Task.FromResult(false);
+
+            var logger = CreateLogger(logDto.Application, logDto.Environnement);
 
             try
             {
-                switch (type)
+                switch (logDto.Level)
                 {
-                    case LogType.Errors:
-                        _logger.Error(logContent);
+                    case LogLevel.Errors:
+                        logger.Error(logDto.Message);
                         break;
-                    case LogType.Informations:
-                        _logger.Information(logContent);
+                    case LogLevel.Informations:
+                        logger.Information(logDto.Message);
                         break;
                     default:
                         return Task.FromResult(false);
@@ -58,6 +58,13 @@ namespace ELKApi.Services.LoggingService
             {
                 return Task.FromResult(false);
             }
+        }
+
+        public bool IsValidLogDto(LogDto logDto)
+        {
+            return logDto != null
+                && !string.IsNullOrWhiteSpace(logDto.Message)
+                && Enum.IsDefined(logDto.Level);
         }
     }
 }
