@@ -23,7 +23,7 @@ namespace ELKApi.Tests
             // Arrange
             LogDto logDto = new()
             {
-                Level = logLevel,
+                Level = logLevel.ToString(),
                 Message = "Unit test"
             };
 
@@ -42,7 +42,7 @@ namespace ELKApi.Tests
             // Arrange
             LogDto logDto = new()
             {
-                Level = logLevel,
+                Level = logLevel.ToString(),
                 Message = string.Empty
             };
 
@@ -59,7 +59,7 @@ namespace ELKApi.Tests
             // Arrange
             LogDto logDto = new()
             {
-                Level = LogLevel.NA,
+                Level = LogLevel.NA.ToString(),
                 Message = "Unit test"
             };
 

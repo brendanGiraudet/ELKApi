@@ -28,7 +28,7 @@ namespace ELKApi.Tests
             LogDto logDto = new()
             {
                 Message = content,
-                Level = (Enumerations.LogLevel)Enum.Parse(typeof(Enumerations.LogLevel), logLevel)
+                Level = logLevel
             };
 
             // Act
@@ -48,7 +48,7 @@ namespace ELKApi.Tests
             LogDto logDto = new()
             {
                 Message = "content",
-                Level = Enumerations.LogLevel.Errors
+                Level = Enumerations.LogLevel.Errors.ToString()
             };
             var serviceMock = new Mock<ILoggingService>();
             serviceMock

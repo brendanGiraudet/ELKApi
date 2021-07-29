@@ -41,7 +41,8 @@ namespace ELKApi.Services.LoggingService
 
             try
             {
-                switch (logDto.Level)
+                Enum.TryParse(logDto.Level, out LogLevel logLevel);
+                switch (logLevel)
                 {
                     case LogLevel.Errors:
                         logger.Error(logDto.Message);
@@ -63,8 +64,9 @@ namespace ELKApi.Services.LoggingService
         public bool IsValidLogDto(LogDto logDto)
         {
             return logDto != null
-                && !string.IsNullOrWhiteSpace(logDto.Message)
-                && Enum.IsDefined(logDto.Level);
+            && !string.IsNullOrWhiteSpace(logDto.Message)
+            && Enum.TryParse(logDto.Level, out LogLevel logLevel)
+            && Enum.IsDefined(typeof(LogLevel), logLevel);
         }
     }
 }
