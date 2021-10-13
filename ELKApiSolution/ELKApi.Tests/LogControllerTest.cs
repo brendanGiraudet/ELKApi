@@ -27,8 +27,11 @@ namespace ELKApi.Tests
             // Arrange 
             LogDto logDto = new()
             {
-                Message = content,
-                Level = logLevel
+                Fields = new()
+                {
+                    Message = content,
+                    Level = logLevel
+                }
             };
 
             // Act
@@ -47,8 +50,11 @@ namespace ELKApi.Tests
             // Arrange
             LogDto logDto = new()
             {
-                Message = "content",
-                Level = Enumerations.LogLevel.Errors.ToString()
+                Fields = new()
+                {
+                    Message = "content",
+                    Level = Enumerations.LogLevel.Errors.ToString()
+                }
             };
             var serviceMock = new Mock<ILoggingService>();
             serviceMock

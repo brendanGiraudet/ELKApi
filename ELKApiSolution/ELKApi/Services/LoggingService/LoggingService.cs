@@ -2,9 +2,9 @@
 using ELKApi.Dtos;
 using ELKApi.Enumerations;
 using Microsoft.Extensions.Options;
-using Serilog;
-using Serilog.Sinks.Elasticsearch;
 using System;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ELKApi.Services.LoggingService
@@ -12,61 +12,36 @@ namespace ELKApi.Services.LoggingService
     public class LoggingService : ILoggingService
     {
         private ElasticConfiguration _elasticConfiguration;
-        public LoggingService(IOptions<ElasticConfiguration> elasticConfiguration)
+        private HttpClient _httpClient;
+        public LoggingService(IOptions<ElasticConfiguration> elasticConfiguration, HttpClient httpClient)
         {
             _elasticConfiguration = elasticConfiguration.Value;
+            _httpClient = httpClient;
         }
 
-        private ILogger CreateLogger(string applicationName, string environment)
+        public async Task<bool> Log(LogDto logDto)
         {
-            return new LoggerConfiguration()
-            .Enrich.WithProperty("Application", applicationName)
-            .Enrich.WithProperty("Environment", environment)
-            .MinimumLevel.Debug()
-            .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(_elasticConfiguration.Uri))
-            {
-                AutoRegisterTemplate = true,
-                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                EmitEventFailure = EmitEventFailureHandling.ThrowException | EmitEventFailureHandling.WriteToSelfLog,
-                FailureCallback = e => Console.WriteLine("Unable to submit event " + e.MessageTemplate),
-            })
-            .CreateLogger();
-        }
-
-        public Task<bool> Log(LogDto logDto)
-        {
-            if (!IsValidLogDto(logDto)) return Task.FromResult(false);
-
-            var logger = CreateLogger(logDto.Application, logDto.Environnement);
+            if (!IsValidLogDto(logDto)) return false;
 
             try
             {
-                Enum.TryParse(logDto.Level, out LogLevel logLevel);
-                switch (logLevel)
-                {
-                    case LogLevel.Errors:
-                        logger.Error(logDto.Message);
-                        break;
-                    case LogLevel.Informations:
-                        logger.Information(logDto.Message);
-                        break;
-                    default:
-                        return Task.FromResult(false);
-                }
-                return Task.FromResult(true);
+                var response = await _httpClient.PostAsJsonAsync(_elasticConfiguration.GetLogUrl(logDto.Fields.Application), logDto);
+
+                return response.IsSuccessStatusCode;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Task.FromResult(false);
+                return false;
             }
         }
 
         public bool IsValidLogDto(LogDto logDto)
         {
             return logDto != null
-            && !string.IsNullOrWhiteSpace(logDto.Message)
-            && Enum.TryParse(logDto.Level, out LogLevel logLevel)
-            && Enum.IsDefined(typeof(LogLevel), logLevel);
+            && !string.IsNullOrWhiteSpace(logDto.Fields.Message)
+            && Enum.TryParse(logDto.Fields.Level, out LogLevel logLevel)
+            && Enum.IsDefined(typeof(LogLevel), logLevel)
+            && !string.IsNullOrWhiteSpace(logDto.Fields.Application);
         }
     }
 }
