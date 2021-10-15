@@ -1,6 +1,7 @@
 ﻿using ELKApi.Controllers;
 using ELKApi.Dtos;
 using ELKApi.Services.LoggingService;
+using ELKApi.Tests.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -12,30 +13,37 @@ namespace ELKApi.Tests
 {
     public class LogControllerTest
     {
-        readonly LogController _logController;
-        public LogControllerTest(ILoggingService loggingService)
+        ILoggingService DefaultLoggingService
         {
-            _logController = new LogController(loggingService);
+            get
+            {
+                var mock = new Mock<ILoggingService>();
+
+                mock.Setup(s => s.IsValidLogDto(It.IsAny<LogDto>()))
+                    .Returns(true)
+                    .Verifiable();
+                
+                mock.Setup(s => s.Log(It.IsAny<LogDto>()))
+                    .Returns(Task.FromResult(true))
+                    .Verifiable();
+
+                return mock.Object;
+            }
         }
+        LogController CreateLogController() => new LogController(DefaultLoggingService);
+        LogController CreateLogController(ILoggingService loggingService) => new LogController(loggingService);
+
         #region Log
-        [Theory]
-        [InlineData("azerzr", "-1", StatusCodes.Status400BadRequest)]
-        [InlineData("", "1", StatusCodes.Status400BadRequest)]
-        [InlineData("content", "1", StatusCodes.Status201Created)]
-        public async Task ShouldHaveTheRightStatusCodeWhenLog(string content, string logLevel, int expectedStatusCode)
+        [Fact]
+        public async Task ShouldHaveCreatedStatusCodeWhenLog()
         {
             // Arrange 
-            LogDto logDto = new()
-            {
-                Fields = new()
-                {
-                    Message = content,
-                    Level = logLevel
-                }
-            };
+            LogDto logDto = FakerUtils.LogDtoFaker.Generate();
+            var expectedStatusCode = StatusCodes.Status201Created;
+            var logController = CreateLogController();
 
             // Act
-            var response = await _logController.Log(logDto);
+            var response = await logController.Log(logDto);
 
             // Assert
             Assert.IsType<StatusCodeResult>(response);
@@ -45,17 +53,37 @@ namespace ELKApi.Tests
         }
         
         [Fact]
-        public async Task ShouldHaveInternalServerErrorStatusCodeWhenLog()
+        public async Task ShouldHaveBadRequestStatusCodeWhenLogWithWrongDto()
         {
             // Arrange
-            LogDto logDto = new()
-            {
-                Fields = new()
-                {
-                    Message = "content",
-                    Level = Enumerations.LogLevel.Errors.ToString()
-                }
-            };
+            LogDto logDto = FakerUtils.LogDtoFaker.Generate();
+            var expectedStatusCode = StatusCodes.Status400BadRequest;
+            var serviceMock = new Mock<ILoggingService>();
+            
+            serviceMock
+                .Setup(s => s.IsValidLogDto(It.IsAny<LogDto>()))
+                .Returns(false)
+                .Verifiable();
+
+            var logController = CreateLogController(serviceMock.Object);
+
+            // Act
+            var response = await logController.Log(logDto);
+
+            // Assert
+            Assert.IsType<StatusCodeResult>(response);
+
+            var result = response as StatusCodeResult;
+            Assert.Equal(expectedStatusCode, result.StatusCode);
+
+        }
+        
+        [Fact]
+        public async Task ShouldHaveInternalServerErrorStatusCodeWhenLogWithLoggingServiceProblem()
+        {
+            // Arrange
+            LogDto logDto = FakerUtils.LogDtoFaker.Generate();
+            var expectedStatusCode = StatusCodes.Status500InternalServerError;
             var serviceMock = new Mock<ILoggingService>();
             serviceMock
                 .Setup(s => s.Log(It.IsAny<LogDto>()))
@@ -66,15 +94,17 @@ namespace ELKApi.Tests
                 .Setup(s => s.IsValidLogDto(It.IsAny<LogDto>()))
                 .Returns(true)
                 .Verifiable();
-            var controller = new LogController(serviceMock.Object);
+
+            var logController = CreateLogController(serviceMock.Object);
 
             // Act
-            var response = await controller.Log(logDto);
+            var response = await logController.Log(logDto);
 
             // Assert
             Assert.IsType<StatusCodeResult>(response);
+
             var result = response as StatusCodeResult;
-            Assert.Equal(StatusCodes.Status500InternalServerError, result.StatusCode);
+            Assert.Equal(expectedStatusCode, result.StatusCode);
 
         }
         #endregion

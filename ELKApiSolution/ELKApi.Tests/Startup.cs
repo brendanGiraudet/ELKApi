@@ -18,6 +18,7 @@ namespace ELKApi.Tests
 
             // Services
             services.AddTransient<ILoggingService, LoggingService>();
+            services.AddHttpClient();
         }
     }
 }

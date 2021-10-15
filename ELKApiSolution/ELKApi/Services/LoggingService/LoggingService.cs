@@ -4,7 +4,6 @@ using ELKApi.Enumerations;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ELKApi.Services.LoggingService
