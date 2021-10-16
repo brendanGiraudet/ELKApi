@@ -37,6 +37,7 @@ namespace ELKApi
 
             // Services
             services.AddTransient<ILoggingService, LoggingService>();
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
