@@ -10,8 +10,8 @@ namespace ELKApi.Services.LoggingService
 {
     public class LoggingService : ILoggingService
     {
-        private ElasticConfiguration _elasticConfiguration;
-        private HttpClient _httpClient;
+        private readonly ElasticConfiguration _elasticConfiguration;
+        private readonly HttpClient _httpClient;
         public LoggingService(IOptions<ElasticConfiguration> elasticConfiguration, HttpClient httpClient)
         {
             _elasticConfiguration = elasticConfiguration.Value;
@@ -30,6 +30,7 @@ namespace ELKApi.Services.LoggingService
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
