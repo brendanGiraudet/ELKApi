@@ -9,3 +9,4 @@
 /ELKApiSolution/.vs/ELKApiSolution
 /ELKApiSolution/ELKApi.Tests/bin/Debug/net5.0
 /ELKApiSolution/ELKApi.Tests/obj
+/ELKApiSolution/ELKApi/appsettings.Development.json
