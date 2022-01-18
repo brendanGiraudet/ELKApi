@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "0f1eaad8-1150-46a6-867f-26f845672532",
+		"name": "elk_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/WeatherForecast",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{elk_api_baseurl}}/WeatherForecast",
+					"host": [
+						"{{elk_api_baseurl}}"
+					],
+					"path": [
+						"WeatherForecast"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/Log",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"fields\": {\r\n    \"message\": \"coucou\",\r\n    \"level\": \"Informations\",\r\n    \"environnement\": \"swagger\",\r\n    \"application\": \"music_player\"\r\n  }}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{elk_api_baseurl}}/api/Log",
+					"host": [
+						"{{elk_api_baseurl}}"
+					],
+					"path": [
+						"api",
+						"Log"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "elk_api",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "music_player",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "95A12624-6FF6-449B-AF3A-A33594A8532",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "{{login_baseurl}}/connect/token",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "client_credentials",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
