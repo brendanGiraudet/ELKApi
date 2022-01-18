@@ -8,7 +8,7 @@ namespace ELKApi.Dtos
         [JsonPropertyName("@timestamp")]
         public string Timestamp => DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.fff'Z'");
         [JsonPropertyName("fields")]
-        public Fields Fields { get; set; }
+        public Fields Fields { get; set; } = new Fields();
     }
 
     public class Fields

@@ -38,6 +38,7 @@ namespace ELKApi.Services.LoggingService
         public bool IsValidLogDto(LogDto logDto)
         {
             return logDto != null
+            && logDto.Fields != null
             && !string.IsNullOrWhiteSpace(logDto.Fields.Message)
             && Enum.TryParse(logDto.Fields.Level, out LogLevel logLevel)
             && Enum.IsDefined(typeof(LogLevel), logLevel)
