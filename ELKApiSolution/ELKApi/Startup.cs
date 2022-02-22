@@ -70,6 +70,16 @@ namespace ELKApi
                      ValidateAudience = false,
                  };
              });
+
+            var scopes = Configuration["Login:Scope"];  
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ApiScope", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", scopes);
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,7 +102,8 @@ namespace ELKApi
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers()
+                         .RequireAuthorization("ApiScope");
             });
         }
     }
