@@ -71,7 +71,7 @@ namespace ELKApi
                  };
              });
 
-            var scopes = Configuration["Login:Scope"];  
+            var scopes = Configuration["Login:ApiScopes"];  
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("ApiScope", policy =>
