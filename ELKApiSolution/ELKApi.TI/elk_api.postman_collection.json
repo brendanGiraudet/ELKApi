@@ -54,23 +54,28 @@
 		"type": "oauth2",
 		"oauth2": [
 			{
-				"key": "client_authentication",
-				"value": "header",
+				"key": "tokenName",
+				"value": "{{token_name}}",
 				"type": "string"
 			},
 			{
 				"key": "scope",
-				"value": "elk_api",
+				"value": "{{scopes}}",
 				"type": "string"
 			},
 			{
 				"key": "clientSecret",
-				"value": "music_player",
+				"value": "{{client_secret}}",
 				"type": "string"
 			},
 			{
 				"key": "clientId",
-				"value": "95A12624-6FF6-449B-AF3A-A33594A8532",
+				"value": "{{client_id}}",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "body",
 				"type": "string"
 			},
 			{
