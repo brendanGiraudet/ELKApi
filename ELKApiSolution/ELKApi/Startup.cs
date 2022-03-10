@@ -1,5 +1,5 @@
 using ELKApi.Config;
-using ELKApi.Services.LoggingService;
+using ELKApi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -52,11 +52,10 @@ namespace ELKApi
             });
 
             // Config
-            services.Configure<ElasticConfiguration>(options => Configuration.GetSection("ElasticConfiguration").Bind(options));
+            services.AddConfigurations(Configuration);
 
             // Services
-            services.AddTransient<ILoggingService, LoggingService>();
-            services.AddHttpClient();
+            services.AddServices();
 
             var authority = Configuration["Login:Authority"];
             services.AddAuthentication("Bearer")
@@ -65,13 +64,10 @@ namespace ELKApi
                  options.Authority = authority;
                  options.RequireHttpsMetadata = false;
 
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateAudience = false,
-                 };
+                 options.Audience = "D822F211-371B-4050-BD1A-10CBB8218E13";
              });
 
-            var scopes = Configuration["Login:ApiScopes"];  
+            var scopes = Configuration["Login:ApiScopes"];
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("ApiScope", policy =>
