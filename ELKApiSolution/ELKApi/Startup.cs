@@ -1,4 +1,3 @@
-using ELKApi.Config;
 using ELKApi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,21 +57,23 @@ namespace ELKApi
             services.AddServices();
 
             var authority = Configuration["Login:Authority"];
+            var apiRessoureId = Configuration["Login:ApiRessourcesId"];
             services.AddAuthentication("Bearer")
-             .AddJwtBearer("Bearer", options =>
-             {
-                 options.Authority = authority;
-                 options.RequireHttpsMetadata = false;
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.Authority = authority;
 
-                 options.Audience = "D822F211-371B-4050-BD1A-10CBB8218E13";
-             });
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false
+                };
+            });
 
             var scopes = Configuration["Login:ApiScopes"];
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("ApiScope", policy =>
                 {
-                    policy.RequireAuthenticatedUser();
                     policy.RequireClaim("scope", scopes);
                 });
             });
