@@ -1,21 +1,17 @@
-﻿using ELKApi.Config;
-using ELKApi.Dtos;
+﻿using ELKApi.Dtos;
 using ELKApi.Enumerations;
-using Microsoft.Extensions.Options;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
+using Elastic.Clients.Elasticsearch;
 
 namespace ELKApi.Services.LoggingService
 {
     public class LoggingService : ILoggingService
     {
-        private readonly ElasticConfiguration _elasticConfiguration;
-        private readonly HttpClient _httpClient;
-        public LoggingService(IOptions<ElasticConfiguration> elasticConfiguration, HttpClient httpClient)
+        private readonly ElasticsearchClient _elasticsearchClient;
+        public LoggingService(ElasticsearchClient elasticsearchClient)
         {
-            _elasticConfiguration = elasticConfiguration.Value;
-            _httpClient = httpClient;
+            _elasticsearchClient = elasticsearchClient;
         }
 
         public async Task<bool> Log(LogDto logDto)
@@ -24,9 +20,9 @@ namespace ELKApi.Services.LoggingService
 
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(_elasticConfiguration.GetLogUrl(logDto.Fields.Application), logDto);
+                var response = await _elasticsearchClient.IndexAsync(logDto, request => request.Index(logDto.Fields.Application));
 
-                return response.IsSuccessStatusCode;
+                return response.IsValid;
             }
             catch (Exception ex)
             {

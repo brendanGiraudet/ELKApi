@@ -14,5 +14,8 @@ namespace ELKApi.Tests.Utils
             .RuleFor(r => r.Environnement, f => "unit_test")
             .RuleFor(r => r.Level, f => f.PickRandom<LogLevel>().ToString())
             .RuleFor(r => r.Message, f => f.Random.String2(2));
+
+        public static Faker<Elastic.Clients.Elasticsearch.IndexResponse> IndexResponseFaker => new Faker<Elastic.Clients.Elasticsearch.IndexResponse>()
+        .RuleFor(r => r.Result, Elastic.Clients.Elasticsearch.Result.Created);
     }
 }

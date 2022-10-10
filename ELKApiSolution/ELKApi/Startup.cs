@@ -54,7 +54,7 @@ namespace ELKApi
             services.AddConfigurations(Configuration);
 
             // Services
-            services.AddServices();
+            services.AddServices(Configuration);
 
             var authority = Configuration["Login:Authority"];
             var apiRessoureId = Configuration["Login:ApiRessourcesId"];

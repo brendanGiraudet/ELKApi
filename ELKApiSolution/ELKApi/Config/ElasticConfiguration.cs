@@ -2,8 +2,8 @@
 {
     public class ElasticConfiguration
     {
-        public string Uri { get; set; }
-        public string GetLogUrl(string application) => string.Format(Uri.ToLower(), application.ToLower());
+        public string CloudId { get; set; }
+        public string ApiKey { get; set; }
 
     }
 }

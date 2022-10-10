@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ELKApiSolution/ELKApi/ELKApi.csproj",
+                "${workspaceFolder}/ELKApiSolution/",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
