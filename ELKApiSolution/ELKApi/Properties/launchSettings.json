@@ -25,7 +25,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "https://localhost:443",
+      "applicationUrl": "https://localhost:443;https://localhost:80",
       "useSSL": true
     },
     "Docker": {
