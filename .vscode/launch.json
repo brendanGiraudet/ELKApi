@@ -13,7 +13,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/ELKApiSolution/ELKApi/bin/Debug/net5.0/ELKApi.dll",
+            "program": "${workspaceFolder}/ELKApiSolution/ELKApi/bin/Debug/net6.0/ELKApi.dll",
             "args": [],
             "cwd": "${workspaceFolder}/ELKApiSolution/ELKApi",
             "stopAtEntry": false,

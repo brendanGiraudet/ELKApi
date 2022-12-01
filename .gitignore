@@ -5,9 +5,8 @@
 /.vs
 /ELKApiSolution/.vs/ELKApiSolution/v16
 /ELKApiSolution/ELKApi/obj
-/ELKApiSolution/ELKApi/bin/Debug/net5.0
+/ELKApiSolution/ELKApi/bin
 /ELKApiSolution/.vs/ELKApiSolution
-/ELKApiSolution/ELKApi.Tests/bin/Debug/net5.0
 /ELKApiSolution/ELKApi.Tests/obj
+/ELKApiSolution/ELKApi.Tests/bin
 /ELKApiSolution/ELKApi/appsettings.Development.json
-/ELKApiSolution/ELKApi.Tests/bin/Release/net5.0

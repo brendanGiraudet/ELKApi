@@ -26,28 +26,6 @@ namespace ELKApi
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "ELKApi", Version = "v1" });
-                var securitySchema = new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                };
-
-                options.AddSecurityDefinition("Bearer", securitySchema);
-
-                var securityRequirement = new OpenApiSecurityRequirement
-                {
-                    { securitySchema, new[] { "Bearer" } }
-                };
-
-                options.AddSecurityRequirement(securityRequirement);
             });
 
             // Config
@@ -56,27 +34,6 @@ namespace ELKApi
             // Services
             services.AddServices(Configuration);
 
-            var authority = Configuration["Login:Authority"];
-            var apiRessoureId = Configuration["Login:ApiRessourcesId"];
-            services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
-            {
-                options.Authority = authority;
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false
-                };
-            });
-
-            var scopes = Configuration["Login:ApiScopes"];
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ApiScope", policy =>
-                {
-                    policy.RequireClaim("scope", scopes);
-                });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,14 +51,11 @@ namespace ELKApi
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers()
-                         .RequireAuthorization("ApiScope");
+                endpoints.MapControllers();
             });
         }
     }
 }
+//  .RequireAuthorization("ApiScope");
