@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: elk-certificate-claim
+  name: elk-certificate-claim
+  namespace: elk
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+  storageClassName: ""
+  volumeMode: Filesystem
+  volumeName: elk-certificate-pv
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 50Mi
+  phase: Bound

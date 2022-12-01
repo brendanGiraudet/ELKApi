@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.applicationName }}
+  namespace: {{ .Values.applicationName }}
+  labels:
+    app: {{ .Values.applicationName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.applicationName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.applicationName }}
+    spec:
+      containers:
+      - name: {{ .Values.applicationName }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        
+        {{- with .Values.volumeMounts }}
+        volumeMounts:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "{{ .Values.environmentVar.aspnetcore.env }}"
+
+        - name: ASPNETCORE_HTTPS_PORT
+          value: "{{ .Values.environmentVar.aspnetcore.port }}"
+
+        - name: ASPNETCORE_Kestrel__Certificates__Default__KeyPath
+          value: "{{ .Values.environmentVar.aspnetcore.privateKey }}"
+
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "{{ .Values.environmentVar.aspnetcore.certificate }}"
+
+        - name: ASPNETCORE_URLS
+          value: "{{ .Values.environmentVar.aspnetcore.urls }}"
+
+        - name: Login__Authority
+          value: "{{ .Values.environmentVar.login.authority }}"
+
+        - name: Login__ApiScopes
+          value: "{{ .Values.environmentVar.login.scopes }}"
+
+        - name: ElasticConfiguration__CloudId
+          value: "{{ .Values.environmentVar.elasticSearch.cloudId }}"
+
+        - name: ElasticConfiguration__ApiKey
+          value: "{{ .Values.environmentVar.elasticSearch.apiKey }}"
+      
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
